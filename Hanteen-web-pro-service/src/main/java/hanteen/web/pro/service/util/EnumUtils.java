@@ -7,6 +7,7 @@ import static org.apache.commons.lang3.ArrayUtils.isEmpty;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -19,6 +20,7 @@ public class EnumUtils {
         if (isEmpty(values)) {
             return;
         }
+//      Map<?, List<T>> groupMap = Stream.of(values).collect(Collectors.groupingBy(classifier));
         Map<?, List<T>> groupMap = Stream.of(values).collect(groupingByWithNullKeys(classifier));
         groupMap.forEach((k, v) -> checkState(v.size() == 1,
                 "[%s] %s have duplicate key %s", v.get(0).getClass().getName(), v.toString(), k));

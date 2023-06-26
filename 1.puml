@@ -1,0 +1,54 @@
+@startuml
+title Oauth2令牌颁发之授权码模式
+
+actor User as user
+participant "User Agent" as userAgent
+participant "Client" as client
+participant "Auth Login" as login
+participant "Auth Server" as server
+
+== part1 ==
+autonumber
+user->userAgent:访问客户端
+activate userAgent
+userAgent->login:重定向到授权页面+clientId+redirectUrl
+activate login
+login->server:用户名+密码+clientId+redirectUrl
+activate server
+server-->login:返回授权码
+login-->userAgent:重定向到redirectUrl+授权码code
+deactivate login
+userAgent->client:使用授权码code换取令牌
+activate client
+client->server:授权码code+clientId+clientSecret
+server-->client:颁发访问令牌accessToken+refreshToken
+deactivate server
+client-->userAgent:返回访问和刷新令牌
+deactivate client
+userAgent--> user:令牌颁发完成
+deactivate userAgent
+
+== part2 ==
+autonumber
+user->userAgent:访问客户端
+activate userAgent
+alt 正确版本
+userAgent -> userAgent:配置构造
+userAgent -> user:客户端配置:hasSig
+
+else 错误版本
+userAgent -> user:error
+
+end
+
+alt hasSig
+user->userAgent:访问客户端携带sig
+userAgent -> userAgent:检查sig
+alt sig正确
+userAgent -> user:成功
+else sig错误
+userAgent -> user:请更换正确sig
+end
+end
+
+@enduml

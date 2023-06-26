@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="false" debug="false">
+
+    <!--转换器-->
+    <conversionRule conversionWord="cor" converterClass="org.springframework.boot.logging.logback.ColorConverter"/>
+
+    <contextName>ZH</contextName>
+    <!-- %X{xxx}取MDC的参数 -->
+    <property name="CONSOLE_LOG_PATTERN"
+              value="${CONSOLE_LOG_PATTERN:-%d{${LOG_DATEFORMAT_PATTERN:-yyyy-MM-dd HH:mm:ss.SSS}} %cor(%contextName){red} %cor(${LOG_LEVEL_PATTERN:-%5p}) %cor([%t]){cyan} %cor(\\(%F:%L\\)){blue} %X{userId} -- %m%n}"/>
+    <property name="FILE_LOG_PATTERN"
+              value="${FILE_LOG_PATTERN:-%d{${LOG_DATEFORMAT_PATTERN:-yyyy-MM-dd HH:mm:ss.SSS}} %contextName ${LOG_LEVEL_PATTERN:-%-5p} [%t] \\(%F:%L\\) %X{userId} -- %m%n}"/>
+
+    <include resource="appender.xml"/>
+
+</configuration>

@@ -1,0 +1,44 @@
+@startuml
+title 头像更新及审核时序
+
+actor User as user
+
+participant Client as client
+participant "Qarth Service" as qarth
+participant "Draco" as draco
+
+== 送审流程 ==
+autonumber
+client->qarth:上传头像
+activate qarth
+qarth->draco:头像送审
+activate draco
+draco->qarth:同步返回送审结果（并非审核结果）
+autonumber stop
+note right of draco
+机审头像（5s左右）
+end note
+autonumber 4
+qarth->client:toast[头像已送审，待审核通过后即刻生效]
+qarth->client:接口返回profile信息（旧头像）
+deactivate qarth
+== 审核结果处理 ==
+autonumber
+draco->qarth:MQ异步发送审核结果
+deactivate draco
+activate qarth
+alt 审核通过
+qarth->qarth:头像更新
+qarth -> client:长链接[updateQarthUserProfile]
+client->qarth:拉取最新头像
+
+else 审核未通过
+autonumber stop
+autonumber 2
+qarth->user:发送notice邮件
+deactivate qarth
+end
+
+
+
+@enduml

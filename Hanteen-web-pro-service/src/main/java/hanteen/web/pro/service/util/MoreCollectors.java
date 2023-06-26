@@ -8,14 +8,24 @@ import java.util.function.Function;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
+import hanteen.web.pro.service.model.CommonCode;
+
 /**
  * @author zhaohang
  * Created on 2022-03-18
  */
 public class MoreCollectors {
 
+    /**
+     * Collectors.groupingBy(classifier)，如果分组的 key 为 null，会抛出异常
+     * 如下方法规避这个问题
+     * @param classifier
+     * @param <T>
+     * @param <K>
+     * @return
+     */
     public static <T, K> Collector<T, ?, Map<K, List<T>>>
-        groupingByWithNullKeys(Function<T, K> classifier) {
+        groupingByWithNullKeys(Function<? super T, ? extends K> classifier) {
         return Collectors.toMap(
                 classifier,
                 Collections::singletonList,

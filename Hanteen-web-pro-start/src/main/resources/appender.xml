@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<included>
+
+    <property name="LOG_MAX_FILE_SIZE" value="${LOG_MAX_FILE_SIZE:-${LOG_FILE_MAX_SIZE:-500MB}}"/>
+    <property name="LOG_MAX_HISTORY" value="${LOG_MAX_HISTORY:-${LOG_FILE_MAX_HISTORY:-2}}"/>
+    <property name="APPLICATION_LOG_HOME" value="${APPLICATION_LOG_HOME:-/Users/zhaohang/IdeaProjects/logs}"/>
+
+    <!--输出到控制台-->
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <!--过滤指定level的日志-->
+        <!-- <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+             <level>ERROR</level>
+         </filter>-->
+        <encoder charset="UTF-8">
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 输出到文件-->
+    <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>
+                ${APPLICATION_LOG_HOME}/${MAIN_LOG_FILE_NAME_PATTERN:-zh.log.%d{yyyy-MM-dd}.%i}
+            </fileNamePattern>
+            <!-- 日志最多的保留量，按天数的话就是最大天数，按小时的话就是最大小时数 -->
+            <maxHistory>${MAIN_LOG_MAX_HISTORY:-${LOG_MAX_HISTORY}}</maxHistory>
+            <!-- 每个文件的最大体积，超过则开始分片 -->
+            <maxFileSize>${MAIN_LOG_MAX_FILE_SIZE:-${LOG_MAX_FILE_SIZE}}</maxFileSize>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 日志级别 TRACE < DEBUG < INFO < WARN < ERROR < FATAL 低于设置级别的日志不会输出-->
+    <!-- 优先级大于application.properties中的配置-->
+    <!-- appender需要加到这里面才会生效-->
+    <root level="info">
+        <appender-ref ref="console" />
+        <!--        <appender-ref ref="file" />-->
+    </root>
+
+    <!-- https://mrbird.cc/Spring-Boot-logback.html -->
+    <!-- 向上传递时，会覆盖上级的level，如下配置GreetingController中的INFO日志上级同样不会处理-->
+    <logger name="hanteen.web.pro.web.controller.GreetingController" level="WARN" additivity="true">
+        <appender-ref ref="console"/>
+    </logger>
+</included>

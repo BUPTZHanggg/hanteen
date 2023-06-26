@@ -1,33 +1,92 @@
 package hanteen.web.pro.web.controller;
 
 
+import static hanteen.web.pro.service.model.common.CommonThreadLocal.token;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.imageio.ImageIO;
+
+import org.openjdk.jol.info.ClassLayout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.slf4j.MDC;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
-import hanteen.web.pro.service.user.GetUserInfoService;
-
+import hanteen.web.pro.service.model.CommonCode;
+import hanteen.web.pro.service.model.EmployeeWelfareInfo;
+import hanteen.web.pro.service.model.exception.HanteenBaseException;
+import hanteen.web.pro.service.user.AsyncDataProcessor;
+import hanteen.web.pro.service.util.CommonAssert;
+import hanteen.web.pro.web.annotation.ImportantService;
+import hanteen.web.pro.web.model.CommonMessage;
+import hanteen.web.pro.web.model.GreetingReq;
+import hanteen.web.pro.web.utils.TestUtils;
 
 /**
  * @author paida 派哒 zeyu.pzy@alibaba-inc.com
  */
-@Controller
+@RestController
+@RequestMapping("/rest/v1/hanteen/user")
+@EnableWebMvc
 public class GreetingController {
 
 	private static final Logger logger = LoggerFactory.getLogger(GreetingController.class);
 
-	@Autowired
-	private GetUserInfoService getUserInfoService;
+	@Resource
+	private AsyncDataProcessor asyncDataProcessor;
 
-	@GetMapping("/greeting")
-	public String greeting(@RequestParam(name="name", required=false, defaultValue="1") String name, Model model) {
+	//test log
+	@RequestMapping(value = "/hello", method = RequestMethod.GET)
+	public String testLog(){
+		logger.info("info");
+		logger.warn("warn");
+		MDC.remove("userId");
+		return "helloworld";
+	}
 
-		getUserInfoService.getUserInfoById(name, model);
-		//这里返回的数据类型是String，但实际上更多的数据通过本函数中Model model传给了前端。返回值String也会被SpringMVC整合为一个ModelAndView，以供前端使用。（Controller可以返回多种数值，比如void、String、ModelAndView。同学们可以自行搜索学习）
-		return "greeting";
+	@RequestMapping(value = "/info", method = RequestMethod.GET)
+	public Object greeting(@RequestParam(value = "userId", defaultValue = "") String userId) {
+		CommonAssert.assertTrue(isNotBlank(userId), CommonCode.INVALID_PARAM);
+		Map<String, Object> res = new HashMap<>();
+		res.put("name", "haohang");
+		res.put("a", new EmployeeWelfareInfo());
+		return res;
+	}
+
+	@RequestMapping(value = "/post", method = RequestMethod.POST)
+	public CommonMessage<Map<String, Object>> greeting(@RequestBody GreetingReq req) {
+		Map<String, Object> res = new HashMap<>();
+		res.put("name", "haohang");
+		logger.warn("tk:{}", token());
+		throw new HanteenBaseException(CommonCode.SERVICE_BUSY);
+//		return CommonMessage.ok(res);
+	}
+
+	//test thread pool
+	@RequestMapping(value = "/pool", method = RequestMethod.GET)
+	public String testThreadPoll(){
+		asyncDataProcessor.executeRunnable();
+		return "helloworld";
+	}
+
+	@PostMapping("/avatar/update")
+	public void updateAvatar(@RequestParam MultipartFile avatar) throws IOException {
+		BufferedImage read = ImageIO.read(new ByteArrayInputStream(avatar.getBytes()));
+		return;
 	}
 }

@@ -17,6 +17,12 @@
 package hanteen.web.pro.model.mybatis.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.annotation.Nonnull;
 
 
 /**
@@ -24,7 +30,12 @@ import java.io.Serializable;
  *
  * @author paida 派哒 zeyu.pzy@alibaba-inc.com
  */
-public class MVCMybatisDemoUser implements Serializable {
+public class MVCMybatisDemoUser implements Serializable, Comparable<MVCMybatisDemoUser> {
+    @Override
+    public int compareTo(@Nonnull MVCMybatisDemoUser o) {
+        //返回值大于0 o在前 否者o在后
+        return o.getAge() - this.age;
+    }
 
     /**
      * 编号
@@ -82,5 +93,39 @@ public class MVCMybatisDemoUser implements Serializable {
     {
         this.weight=weight;
         return this;
+    }
+
+    public static void main(String[] args) {
+        MVCMybatisDemoUser u1 = new MVCMybatisDemoUser();
+        u1.setAge(12);
+        MVCMybatisDemoUser u2 = new MVCMybatisDemoUser();
+        u2.setAge(11);
+        MVCMybatisDemoUser u3 = new MVCMybatisDemoUser();
+        u3.setAge(7);
+        List<MVCMybatisDemoUser> list = new ArrayList<>();
+        list.add(u1);
+        list.add(u2);
+        list.add(u3);
+        List<MVCMybatisDemoUser> collect = list.stream().sorted(new UserComparator()).collect(Collectors.toList());
+        System.out.println(collect);
+    }
+
+    @Override
+    public String toString() {
+        return "MVCMybatisDemoUser{" +
+                "id='" + id + '\'' +
+                ", age=" + age +
+                ", height=" + height +
+                ", weight=" + weight +
+                '}';
+    }
+
+    private static class UserComparator implements Comparator<MVCMybatisDemoUser> {
+
+        @Override
+        public int compare(MVCMybatisDemoUser o1, MVCMybatisDemoUser o2) {
+            //返回负数o1在前
+            return o1.getAge().compareTo(o2.getAge());
+        }
     }
 }
