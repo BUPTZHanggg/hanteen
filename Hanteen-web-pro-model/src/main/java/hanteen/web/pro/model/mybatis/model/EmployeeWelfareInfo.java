@@ -1,4 +1,4 @@
-package hanteen.web.pro.service.model;
+package hanteen.web.pro.model.mybatis.model;
 
 /**
  * 员工福利的具体信息

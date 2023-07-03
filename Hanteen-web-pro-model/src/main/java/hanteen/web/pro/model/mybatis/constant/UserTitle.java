@@ -1,14 +1,15 @@
-package hanteen.web.pro.service.constant;
+package hanteen.web.pro.model.mybatis.constant;
 
 import java.util.function.Supplier;
 
-import hanteen.web.pro.service.model.EmployeeWelfareInfo;
+import hanteen.web.pro.model.mybatis.model.EmployeeWelfareInfo;
 
 /**
  * @author zhaohang <zhaohang06@kuaishou.com>
  * Created on 2023-05-06
  */
 public enum UserTitle implements Supplier<EmployeeWelfareInfo> {
+    UNKNOWN,
     ACADEMICIAN, //院士
     PROFESSOR,  //教授
     ASSOCIATE_PROFESSOR, //副教授

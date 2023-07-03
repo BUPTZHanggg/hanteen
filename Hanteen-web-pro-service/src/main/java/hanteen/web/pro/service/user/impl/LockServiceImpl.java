@@ -1,6 +1,6 @@
 package hanteen.web.pro.service.user.impl;
 
-import static hanteen.web.pro.service.model.CommonCode.SERVICE_BUSY;
+import static hanteen.web.pro.service.constant.CommonCode.SERVICE_BUSY;
 
 import java.util.ArrayList;
 import java.util.Collections;

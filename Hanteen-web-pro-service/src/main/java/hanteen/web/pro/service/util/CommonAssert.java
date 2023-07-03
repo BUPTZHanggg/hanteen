@@ -1,6 +1,6 @@
 package hanteen.web.pro.service.util;
 
-import hanteen.web.pro.service.model.CommonCode;
+import hanteen.web.pro.service.constant.CommonCode;
 import hanteen.web.pro.service.model.exception.HanteenBaseException;
 
 /**

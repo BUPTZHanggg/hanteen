@@ -1,6 +1,6 @@
 package hanteen.web.pro.service.model.exception;
 
-import hanteen.web.pro.service.model.CommonCode;
+import hanteen.web.pro.service.constant.CommonCode;
 
 /**
  * @author zhaohang <zhaohang06@kuaishou.com>

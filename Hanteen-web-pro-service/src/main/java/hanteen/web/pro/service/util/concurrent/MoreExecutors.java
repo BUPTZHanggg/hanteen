@@ -1,6 +1,5 @@
 package hanteen.web.pro.service.util.concurrent;
 
-import static hanteen.web.pro.service.util.JsonUtils.toJsonString;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static org.apache.commons.collections4.MapUtils.isNotEmpty;

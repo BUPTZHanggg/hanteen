@@ -12,7 +12,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import hanteen.web.pro.service.util.JsonUtils;
+import hanteen.web.pro.model.utils.JsonUtils;
 import hanteen.web.pro.web.model.GreetingReq;
 
 @RunWith(SpringRunner.class)

@@ -8,8 +8,6 @@ import java.util.function.Function;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
-import hanteen.web.pro.service.model.CommonCode;
-
 /**
  * @author zhaohang
  * Created on 2022-03-18

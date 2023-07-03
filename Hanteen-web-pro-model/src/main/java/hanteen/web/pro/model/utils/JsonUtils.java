@@ -1,21 +1,14 @@
-package hanteen.web.pro.service.util;
+package hanteen.web.pro.model.utils;
 
 import static com.fasterxml.jackson.core.JsonFactory.Feature.INTERN_FIELD_NAMES;
 import static com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES;
-import static java.util.Collections.emptySet;
-import static java.util.Optional.ofNullable;
-import static org.apache.commons.collections4.CollectionUtils.isEmpty;
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.apache.commons.lang3.StringUtils.trimToEmpty;
+import static com.fasterxml.jackson.databind.type.TypeFactory.defaultInstance;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nullable;
 
-import org.apache.commons.collections4.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,6 +67,18 @@ public class JsonUtils {
             return MAPPER.writeValueAsString(obj);
         } catch (JsonProcessingException e) {
             logger.error("[Jackson] Obj to str failed:{}", obj.getClass().getName(), e);
+            return null;
+        }
+    }
+
+    public static Map<String, Object> fromJSON(@Nullable String json) {
+        if (json == null) {
+            return null;
+        }
+        try {
+            return MAPPER.readValue(json,
+                    defaultInstance().constructMapType(Map.class, String.class, Object.class));
+        } catch (IOException e) {
             return null;
         }
     }

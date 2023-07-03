@@ -1,13 +1,13 @@
 package hanteen.web.pro.web.model;
 
-import static hanteen.web.pro.service.util.LocalHostUtil.getHostName;
+import static hanteen.web.pro.service.util.LocalHostUtil.getLocalHostName;
 
 import org.apache.commons.lang3.time.DateFormatUtils;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-import hanteen.web.pro.service.model.CommonCode;
+import hanteen.web.pro.service.constant.CommonCode;
 
 /**
  * @author zhaohang <zhaohang06@kuaishou.com>
@@ -20,7 +20,7 @@ public class CommonMessage<T> {
     private final String msg;
     private T data;
     private final String ts = DateFormatUtils.format(System.currentTimeMillis(), "yyyy-MM-dd HH:mm:ss");
-    private final String host = getHostName();
+    private final String host = getLocalHostName();
 
     private CommonMessage(T data) {
         this.code = CommonCode.SUCCESS.getCode();

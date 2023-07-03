@@ -13,11 +13,10 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.imageio.ImageIO;
 
-import org.openjdk.jol.info.ClassLayout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
-import org.springframework.context.annotation.Lazy;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,15 +26,15 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
-import hanteen.web.pro.service.model.CommonCode;
-import hanteen.web.pro.service.model.EmployeeWelfareInfo;
+import hanteen.web.pro.service.constant.CommonCode;
+import hanteen.web.pro.model.mybatis.model.EmployeeWelfareInfo;
 import hanteen.web.pro.service.model.exception.HanteenBaseException;
 import hanteen.web.pro.service.user.AsyncDataProcessor;
+import hanteen.web.pro.service.user.GetUserInfoService;
+import hanteen.web.pro.service.user.UserRegisterServiceManager;
 import hanteen.web.pro.service.util.CommonAssert;
-import hanteen.web.pro.web.annotation.ImportantService;
 import hanteen.web.pro.web.model.CommonMessage;
 import hanteen.web.pro.web.model.GreetingReq;
-import hanteen.web.pro.web.utils.TestUtils;
 
 /**
  * @author paida 派哒 zeyu.pzy@alibaba-inc.com
@@ -49,10 +48,15 @@ public class GreetingController {
 
 	@Resource
 	private AsyncDataProcessor asyncDataProcessor;
+	@Resource
+	private GetUserInfoService getUserInfoService;
+	@Resource
+	private UserRegisterServiceManager userRegisterServiceManager;
 
 	//test log
 	@RequestMapping(value = "/hello", method = RequestMethod.GET)
 	public String testLog(){
+		long userId = getUserInfoService.getUserId();
 		logger.info("info");
 		logger.warn("warn");
 		MDC.remove("userId");
@@ -88,5 +92,10 @@ public class GreetingController {
 	public void updateAvatar(@RequestParam MultipartFile avatar) throws IOException {
 		BufferedImage read = ImageIO.read(new ByteArrayInputStream(avatar.getBytes()));
 		return;
+	}
+
+	@GetMapping("/register")
+	public void register(@RequestParam(value = "portal") String portal) {
+		userRegisterServiceManager.getRegisterService(portal).register();
 	}
 }

@@ -1,9 +1,7 @@
 package hanteen.web.pro.web.aspect;
 
-import static hanteen.web.pro.service.util.JsonUtils.toJsonString;
+import static hanteen.web.pro.model.utils.JsonUtils.toJsonString;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
-
-import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -22,7 +20,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 
-import hanteen.web.pro.service.model.CommonCode;
+import hanteen.web.pro.service.constant.CommonCode;
 import hanteen.web.pro.service.model.exception.HanteenBaseException;
 import hanteen.web.pro.web.model.CommonMessage;
 

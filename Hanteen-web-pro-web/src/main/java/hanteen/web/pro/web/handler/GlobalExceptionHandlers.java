@@ -1,6 +1,6 @@
 package hanteen.web.pro.web.handler;
 
-import static hanteen.web.pro.service.util.JsonUtils.toJsonString;
+import static hanteen.web.pro.model.utils.JsonUtils.toJsonString;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import hanteen.web.pro.service.model.CommonCode;
+import hanteen.web.pro.service.constant.CommonCode;
 import hanteen.web.pro.service.model.exception.HanteenBaseException;
 import hanteen.web.pro.web.model.CommonMessage;
 
