@@ -5,10 +5,12 @@ import static com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKN
 import static com.fasterxml.jackson.databind.type.TypeFactory.defaultInstance;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Map;
 
 import javax.annotation.Nullable;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,6 +91,19 @@ public class JsonUtils {
         }
         try {
             return MAPPER.readValue(json, valueType);
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    public static <E, T extends Collection<E>> T fromJSON(@Nullable String json,
+            Class<? extends Collection> collectionType, Class<E> valueType) {
+        if (json == null) {
+            return null;
+        }
+        try {
+            return MAPPER.readValue(json,
+                    defaultInstance().constructCollectionType(collectionType, valueType));
         } catch (IOException e) {
             return null;
         }

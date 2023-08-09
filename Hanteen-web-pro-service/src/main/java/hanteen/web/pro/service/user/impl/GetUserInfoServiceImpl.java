@@ -1,7 +1,11 @@
 package hanteen.web.pro.service.user.impl;
 
 
+import static hanteen.web.pro.model.utils.JsonUtils.fromJSON;
+import static java.util.Optional.ofNullable;
+
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -12,6 +16,8 @@ import javax.annotation.Resource;
 import hanteen.web.pro.model.mybatis.constant.UserTitle;
 import hanteen.web.pro.model.mybatis.entity.User;
 import hanteen.web.pro.model.mybatis.model.EmployeeWelfareInfo;
+import hanteen.web.pro.model.utils.JsonUtils;
+import hanteen.web.pro.service.model.UserProfileView;
 import hanteen.web.pro.service.user.GetUserInfoService;
 import hanteen.web.pro.service.user.LockService;
 import hanteen.web.pro.service.util.LocalHostUtil;
@@ -19,6 +25,7 @@ import hanteen.web.pro.service.util.LocalHostUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Joiner;
 
 
@@ -43,6 +50,26 @@ public class GetUserInfoServiceImpl implements GetUserInfoService {
 
     private static final long HOST_MAX = ~(-1L << HOST_BIT);
     private static final long SEQ_MAX = ~(-1L << SEQ_BIT);
+
+    private static final String USER_PROFILE_VIEW_STR = "[\n"
+            + "      {\n"
+            + "          \"key\": \"name\",\n"
+            + "          \"viewParam\": \"姓名\",\n"
+            + "          \"viewValue\": \"张三\",\n"
+            + "          \"mappingType\":\"ADD_0\"\n"
+            + "      },\n"
+            + "      {\n"
+            + "          \"key\": \"title\",\n"
+            + "          \"viewParam\": \"职称\",\n"
+            + "          \"viewValue\": \"教授\",\n"
+            + "          \"mappingType\":\"ADD_1\"\n"
+            + "      }\n"
+            + "]";
+
+    private static final String USER_PROFILE_INFO = "{\n"
+            + "          \"name\": \"三一一\",\n"
+            + "          \"title\": \"教授\"\n"
+            + "      }";
 
     @Resource
     private LockService lockService;
@@ -74,6 +101,25 @@ public class GetUserInfoServiceImpl implements GetUserInfoService {
     public String getUserProfile() {
         String join = Joiner.on("_").join("a", "b");
         return join;
+    }
+
+    @Override
+    public List<UserProfileView> getProfileView() {
+        List<UserProfileView> userProfileViews =
+                fromJSON(USER_PROFILE_VIEW_STR, List.class, UserProfileView.class);
+        List<UserProfileView> result = new ArrayList<>();
+        JsonNode jsonNode = fromJSON(USER_PROFILE_INFO, JsonNode.class);
+        userProfileViews.forEach(view -> {
+            UserProfileView curr = new UserProfileView();
+            curr.setViewParam(view.getViewParam());
+            String origin = jsonNode.get(view.getKey()).asText();
+            String real = ofNullable(origin)
+                    .map(o -> view.getMappingFunc().apply(o))
+                    .orElse("未知");
+            curr.setViewValue(real);
+            result.add(curr);
+        });
+        return result;
     }
 
     private void getUser(Model model) {

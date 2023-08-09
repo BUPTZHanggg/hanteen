@@ -1,6 +1,11 @@
 package hanteen.web.pro.service.user;
 
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.ui.Model;
+
+import hanteen.web.pro.service.model.UserProfileView;
 
 public interface GetUserInfoService {
 
@@ -13,4 +18,6 @@ public interface GetUserInfoService {
     long generateUserId();
 
     String getUserProfile();
+
+    List<UserProfileView> getProfileView();
 }

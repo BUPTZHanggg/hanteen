@@ -1,6 +1,7 @@
 package hanteen.web.pro.web.aspect;
 
 import static hanteen.web.pro.model.utils.JsonUtils.toJsonString;
+import static java.util.Optional.ofNullable;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import javax.servlet.http.HttpServletRequest;
@@ -114,6 +115,7 @@ public class ApiLoggingAspect {
 
     private void reportException(String uri, CommonCode commonCode) {
         //异常上报
-        logger.error("exception {} for {}", commonCode.getMsg(), uri);
+        logger.error("exception {} for {}",
+                ofNullable(commonCode).map(CommonCode::getMsg).orElse(""), uri);
     }
 }

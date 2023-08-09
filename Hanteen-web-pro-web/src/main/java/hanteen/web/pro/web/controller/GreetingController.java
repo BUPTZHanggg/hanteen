@@ -8,6 +8,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -28,6 +29,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import hanteen.web.pro.service.constant.CommonCode;
 import hanteen.web.pro.model.mybatis.model.EmployeeWelfareInfo;
+import hanteen.web.pro.service.model.UserProfileView;
 import hanteen.web.pro.service.model.exception.HanteenBaseException;
 import hanteen.web.pro.service.user.AsyncDataProcessor;
 import hanteen.web.pro.service.user.GetUserInfoService;
@@ -97,5 +99,11 @@ public class GreetingController {
 	@GetMapping("/register")
 	public void register(@RequestParam(value = "portal") String portal) {
 		userRegisterServiceManager.getRegisterService(portal).register();
+	}
+
+	@GetMapping("/profile")
+	public CommonMessage<Object> getProfileView() {
+		List<UserProfileView> profileView = getUserInfoService.getProfileView();
+		return CommonMessage.ok(profileView);
 	}
 }
