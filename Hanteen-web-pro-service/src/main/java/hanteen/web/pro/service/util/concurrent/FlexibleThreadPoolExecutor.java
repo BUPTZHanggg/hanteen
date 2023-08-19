@@ -1,8 +1,8 @@
 package hanteen.web.pro.service.util.concurrent;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static hanteen.web.pro.service.util.concurrent.MoreExecutors.buildThreadFactory;
-import static hanteen.web.pro.service.util.concurrent.MoreExecutors.newFixedQueueThreadPool;
+import static hanteen.web.pro.service.util.concurrent.HanteenExecutors.buildThreadFactory;
+import static hanteen.web.pro.service.util.concurrent.HanteenExecutors.newFixedQueueThreadPool;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;

@@ -3,7 +3,7 @@
 
     <property name="LOG_MAX_FILE_SIZE" value="${LOG_MAX_FILE_SIZE:-${LOG_FILE_MAX_SIZE:-500MB}}"/>
     <property name="LOG_MAX_HISTORY" value="${LOG_MAX_HISTORY:-${LOG_FILE_MAX_HISTORY:-2}}"/>
-    <property name="APPLICATION_LOG_HOME" value="${APPLICATION_LOG_HOME:-/Users/zhaohang/IdeaProjects/logs}"/>
+    <property name="APPLICATION_LOG_HOME" value="${APPLICATION_LOG_HOME:-~/IdeaProjects/logs}"/>
 
     <!--输出到控制台-->
     <appender name="console" class="ch.qos.logback.core.ConsoleAppender">

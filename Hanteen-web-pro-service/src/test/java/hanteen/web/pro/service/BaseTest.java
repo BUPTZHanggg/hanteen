@@ -3,24 +3,22 @@ package hanteen.web.pro.service;
 import static java.lang.Math.abs;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 
+import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.google.common.base.Joiner;
 
 import hanteen.web.pro.model.mybatis.constant.UserTitle;
-import hanteen.web.pro.model.mybatis.entity.User;
+import hanteen.web.pro.service.model.User;
 import hanteen.web.pro.model.utils.JsonUtils;
-import hanteen.web.pro.service.constant.UserState;
-import hanteen.web.pro.service.model.Artist;
 import hanteen.web.pro.service.model.UserScreeningBasicCondition;
-import hanteen.web.pro.service.user.GetUserInfoService;
+import hanteen.web.pro.service.user.UserInfoService;
 
 /**
  * @author zhaohang <zhaohang06@kuaishou.com>

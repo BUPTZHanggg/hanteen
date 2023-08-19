@@ -20,9 +20,9 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
  * @author zhaohang <zhaohang06@kuaishou.com>
  * Created on 2022-05-12
  */
-public class MoreExecutors {
+public class HanteenExecutors {
 
-    private static final Logger logger = LoggerFactory.getLogger(MoreExecutors.class);
+    private static final Logger logger = LoggerFactory.getLogger(HanteenExecutors.class);
 
     private static final long MAX_KEEP_ALIVE_MILLS = MINUTES.toMillis(1);
     private static final boolean INHERIT_MDC = true;

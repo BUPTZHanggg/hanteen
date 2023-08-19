@@ -32,7 +32,7 @@ import hanteen.web.pro.model.mybatis.model.EmployeeWelfareInfo;
 import hanteen.web.pro.service.model.UserProfileView;
 import hanteen.web.pro.service.model.exception.HanteenBaseException;
 import hanteen.web.pro.service.user.AsyncDataProcessor;
-import hanteen.web.pro.service.user.GetUserInfoService;
+import hanteen.web.pro.service.user.UserInfoService;
 import hanteen.web.pro.service.user.UserRegisterServiceManager;
 import hanteen.web.pro.service.util.CommonAssert;
 import hanteen.web.pro.web.model.CommonMessage;
@@ -51,14 +51,14 @@ public class GreetingController {
 	@Resource
 	private AsyncDataProcessor asyncDataProcessor;
 	@Resource
-	private GetUserInfoService getUserInfoService;
+	private UserInfoService userInfoService;
 	@Resource
 	private UserRegisterServiceManager userRegisterServiceManager;
 
 	//test log
 	@RequestMapping(value = "/hello", method = RequestMethod.GET)
 	public String testLog(){
-		long userId = getUserInfoService.getUserId();
+		long userId = userInfoService.getUserId();
 		logger.info("info");
 		logger.warn("warn");
 		MDC.remove("userId");
@@ -103,7 +103,7 @@ public class GreetingController {
 
 	@GetMapping("/profile")
 	public CommonMessage<Object> getProfileView() {
-		List<UserProfileView> profileView = getUserInfoService.getProfileView();
+		List<UserProfileView> profileView = userInfoService.getProfileView();
 		return CommonMessage.ok(profileView);
 	}
 }

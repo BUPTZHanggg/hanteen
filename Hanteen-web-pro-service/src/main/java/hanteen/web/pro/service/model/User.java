@@ -1,4 +1,4 @@
-package hanteen.web.pro.model.mybatis.entity;
+package hanteen.web.pro.service.model;
 
 
 import static java.util.Collections.emptyMap;

@@ -1,7 +1,6 @@
 package hanteen.web.pro.service.user.impl;
 
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import javax.annotation.PostConstruct;
 
@@ -12,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 import hanteen.web.pro.service.user.AsyncDataProcessor;
 import hanteen.web.pro.service.util.concurrent.BlockingEnqueueThreadPoolExecutor;
-import hanteen.web.pro.service.util.concurrent.MoreExecutors;
+import hanteen.web.pro.service.util.concurrent.HanteenExecutors;
 
 /**
  * @author zhaohang <zhaohang06@kuaishou.com>
@@ -34,7 +33,7 @@ public class AsyncDataProcessorImpl implements AsyncDataProcessor {
         logger.info("{}", this.getClass().getClassLoader());
         logger.info("{}", this.getClass().getClassLoader().getParent());
         logger.info("init thread pool, curr thread:{}", Thread.currentThread().getName());
-        asyncDataProcessor = MoreExecutors.newFixedQueueThreadPool(POLL_SIZE, "data-proccesor-%d");
+        asyncDataProcessor = HanteenExecutors.newFixedQueueThreadPool(POLL_SIZE, "data-proccesor-%d");
     }
 
     @Override
