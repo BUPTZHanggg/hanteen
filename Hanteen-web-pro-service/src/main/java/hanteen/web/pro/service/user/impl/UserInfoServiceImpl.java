@@ -1,6 +1,7 @@
 package hanteen.web.pro.service.user.impl;
 
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.util.concurrent.Uninterruptibles.sleepUninterruptibly;
 import static hanteen.web.pro.model.utils.JsonUtils.fromJSON;
 import static java.lang.Math.abs;
@@ -12,10 +13,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -28,11 +34,16 @@ import hanteen.web.pro.service.model.User;
 import hanteen.web.pro.service.model.UserProfileView;
 import hanteen.web.pro.service.user.LockService;
 import hanteen.web.pro.service.user.UserInfoService;
+import hanteen.web.pro.service.util.BeanUtils;
 import hanteen.web.pro.service.util.LocalHostUtil;
+import hanteen.web.pro.service.util.SupplierDecorator;
 import hanteen.web.pro.service.util.concurrent.HanteenExecutors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
@@ -42,6 +53,7 @@ import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 
 
@@ -92,6 +104,10 @@ public class UserInfoServiceImpl implements UserInfoService {
     public static final int USER_SHARD_SIZE = 20;
     private ThreadPoolExecutor pool;
     private ListeningExecutorService listeningExecutor;
+    private static String userTimestamp;
+    private static final Supplier<UserProfileLoader> PROFILE_LOADER_SUPPLIER
+            = SupplierDecorator.singletonSupplier(() -> BeanUtils.getBean(UserProfileLoader.class)); //这样的好处是即便UserProfileLoader在容器中不是单例的bean，也能做到单例的效果
+//    private static final Supplier<UserProfileLoader> PROFILE_LOADER_SUPPLIER = () -> BeanUtils.getBean(UserProfileLoader.class); //这样的话如果UserProfileLoader在容器中不是单例的bean，就会存在多个loader同时执行
 
     @Resource
     private LockService lockService;
@@ -133,6 +149,9 @@ public class UserInfoServiceImpl implements UserInfoService {
 
     @Override
     public List<UserProfileView> getProfileView() {
+//        checkNotNull(PROFILE_LOADER_SUPPLIER.get(), "No available loader for profile");
+        PROFILE_LOADER_SUPPLIER.get().load();
+        logger.info("user time:{}", userTimestamp);
         List<UserProfileView> userProfileViews =
                 fromJSON(USER_PROFILE_VIEW_STR, List.class, UserProfileView.class);
         List<UserProfileView> result = new ArrayList<>();
@@ -292,5 +311,50 @@ public class UserInfoServiceImpl implements UserInfoService {
     private boolean updateInfo3() {
         System.out.println(Thread.currentThread().getName() + " :update info3");
         return true;
+    }
+
+    @Component
+    @Lazy
+    @Scope("prototype") //为了测试上面的singletonSupplier，这里手动改成多例模式
+    private static class UserProfileLoader {
+
+        private static final Logger logger = LoggerFactory.getLogger(UserProfileLoader.class);
+
+        private ScheduledExecutorService executorService;
+        private final AtomicBoolean threadInitialized = new AtomicBoolean(false);
+        private static final int PERIOD_SECONDS = 5;
+
+        public UserProfileLoader() {
+            logger.info("create loader");
+        }
+
+        @PostConstruct
+        public void init() {
+            ThreadFactory factory = new ThreadFactoryBuilder()
+                    .setDaemon(true)
+                    .setNameFormat("user-profile-load-thread-%d")
+                    .build();
+            executorService = Executors.newSingleThreadScheduledExecutor(factory);
+        }
+
+        public void load() {
+            if (threadInitialized.get()) {
+                return;
+            }
+            if (threadInitialized.compareAndSet(false, true)) {
+                Runtime.getRuntime().addShutdownHook(new Thread(this::stop, "zhaoh-t"));
+                executorService.scheduleAtFixedRate(this::doLoad, 0L, PERIOD_SECONDS, TimeUnit.SECONDS);
+            }
+        }
+
+        private void stop() {
+            logger.info("stop the schedule thread");
+            MoreExecutors.shutdownAndAwaitTermination(executorService, 30, TimeUnit.SECONDS);
+        }
+
+        private void doLoad() {
+            logger.info("start load user profile by thread:{}", Thread.currentThread().getName());
+            userTimestamp = String.valueOf(System.currentTimeMillis());
+        }
     }
 }
